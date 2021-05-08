@@ -9,19 +9,16 @@ def get_path(tab, filename):
 # 读取文件中的记录并进行初步处理（直接使用spark内置文本读取器直接读取为rdd）
 def read_data(spark, filename):
     rdd = spark.sparkContext.textFile(get_path('r', filename))
-
     # 获取文件头并且过滤掉文件头
     header = rdd.first()
     rdd = rdd.filter(lambda row: row != header)
 
     def map_fuc(row):
         row = row.split(',')
-
-        # 将字符串中的小数点及其后面部分过滤掉使之可被直接转换为整型
+        # 将字符串中的带小数点的预先转换为浮点型
         for i in range(len(row)):
             if '.' in row[i]:
-                row[i] = row[i].split('.')[0]
-
+                row[i] = float(row[i])
         # 将记录中的字符型数据转换为可被读取的数字
         if row[1] == 'Male':
             row[1] = 1
@@ -56,7 +53,6 @@ def read_data(spark, filename):
 # 获取文件记录并进行初步处理（使用python内置读取为列表，用来创建可并发的rdd）
 def read_list_data(spark, filename):
     line_list = []
-
     # 读取文件记录并过滤表头
     with open(mode='r',file=get_path('r',filename)) as f:
         header = f.readline().strip()
@@ -66,13 +62,10 @@ def read_list_data(spark, filename):
     rdd = spark.sparkContext.parallelize(line_list)
 
     def map_fuc(row):
-
-        # 将字符串中的小数点及其后面部分过滤掉使之可被直接转换为整型
+        # 将字符串中的带小数点的预先转换为浮点型
         for i in range(len(row)):
             if '.' in row[i]:
-                row[i] = row[i].split('.')[0]
-
-
+                row[i] = float(row[i])
         # 将记录中的字符型数据转换为可被读取的数字
         if row[1] == 'Male':
             row[1] = 1
@@ -99,7 +92,6 @@ def read_list_data(spark, filename):
         return ret
 
     rdd = rdd.map(map_fuc)
-
     # 初步过滤表头
     header = list(header.split(','))
     header.pop(0)

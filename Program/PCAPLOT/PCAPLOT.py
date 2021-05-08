@@ -15,7 +15,10 @@ def PCA_builder(spark,rdd,n):
 def tran_vectors(rdd):
 
     def map_fuc(row):
-        return (Vectors.dense(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9]),)
+        ret = []
+        for ch in row[0]:
+            ret.append(ch)
+        return (Vectors.dense(ret),)
 
     return rdd.map(map_fuc)
 
