@@ -20,7 +20,7 @@ def model_training(training_data, param_info):
 
 # 根据提供的参数建立模型及其参数表
 def model_setting(param_info):
-    # 建立gbt模型
+    # 建立随机森林模型
     rf = RandomForestClassifier(labelCol="label", featuresCol="features", weightCol='weight')
     # 获取参数列表
     bin_info = get_param(param_info)
@@ -41,7 +41,7 @@ def get_param(param_info):
 
 # 根据提供的参数建立模型并训练以及评估，最后返回其参数
 def model_learning(training_data, test_data, num_bins=25):
-    # 建立gbt模型
+    # 建立随机森林模型
     time_start = time.time()    # 计时开始
     rf = RandomForestClassifier(labelCol="label", featuresCol="features", weightCol='weight',
                                 maxBins=num_bins)
